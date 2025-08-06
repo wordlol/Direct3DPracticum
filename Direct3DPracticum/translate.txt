@@ -1,0 +1,161 @@
+#include "windows.h"
+#include "string"
+#include <sstream>
+
+//определение пользовательской процедуры окна это настройка собственного поведения окна
+LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    switch (msg) //доболнительное поедение
+    {
+    case WM_CLOSE: //не является ли оно закрытым
+         {
+            PostQuitMessage(69); //отправляем сообщение для выхода отправка в очередь для выхода
+         }
+            break;
+    case WM_KEYDOWN: //есть очень много сообщений около 1000+ нпример понимает что нажата клавиша вниз
+        if (wParam = 'F') //пример
+        {
+            SetWindowText(hWnd, L"DSADASD");
+        }
+        break;
+    case WM_CHAR: //сообщение для ввода текста
+    {
+        static std::string title;
+        title.push_back(wParam); //записывает в буфер строки слово
+        std::wstring stemp = std::wstring(title.begin(), title.end());//преобразует слово из string в wchar_t (LPCWSTR lpString)
+        SetWindowText(hWnd, stemp.c_str());
+
+    }
+        break;
+    case WM_LBUTTONDOWN: //левая кнопка мыши
+    {
+        POINTS Pt = MAKEPOINTS(lParam); //определяет точки мыши
+        std::ostringstream oss; //он рисует текст куда нам хочется как раньше это был для терменала а теперь для окна
+        oss << "(" << Pt.x << "," << Pt.y << ")";
+        const std::string title = oss.str(); // мы ложны для преобразования иметь константкую строку
+        std::wstring stemp = std::wstring(title.begin(), title.end()); //только в таком случае не вылетает преобразование
+        SetWindowText(hWnd, stemp.c_str());
+    }
+    break;
+    }
+    return DefWindowProc(hWnd, msg, wParam, lParam); //возвращает базовое поведение окна
+}
+
+
+// callback соглашение о вызове функции не как в с++
+int CALLBACK WinMain(
+    HINSTANCE hInstance,//* //указатели на труктуры которые содержат инфу нашей программы
+    HINSTANCE hPrevInstance,//* нулевой экземпляр
+    LPSTR lpCmdLine,//командная строка для обработки
+    int nShowCmd //как должно отображаться окно при запуске
+)
+{
+    WNDCLASSEX wc = {0}; //структура которую мы заполняем для передачи ее указателя в регистрацию
+    //изначально мы ее обнуляем
+    /*UINT      cbSize; размер структуры
+    UINT      style; различные стили классов
+    WNDPROC   lpfnWndProc; указатель на функцию window proс процедура обработки окон
+    int       cbClsExtra; выделяет дополнительные байты в классе
+    int       cbWndExtra; выделяет байты для окнон которые мы создаем
+    HINSTANCE hInstance; HINSTANCE hInstance из winmain
+    HICON     hIcon;
+    HCURSOR   hCursor;
+    HBRUSH    hbrBackground;
+    LPCWSTR   lpszMenuName; меню окна
+    LPCWSTR   lpszClassName; название класса которые мы используем для регистрации
+    HICON     hIconSm;*/ //значек для окна
+    const wchar_t ClassName = (wchar_t)"Direct3DPracticum"; // это и есть назавние класса окна
+    wc.cbSize = sizeof(wc);
+    wc.style = CS_OWNDC;
+    wc.lpfnWndProc = WndProc;
+    wc.cbClsExtra = 0;
+    wc.cbWndExtra = 0;
+    wc.hInstance = hInstance;
+    wc.hIcon = nullptr;
+    wc.hCursor = nullptr;
+    wc.hbrBackground = nullptr;
+    wc.lpszMenuName = nullptr;
+    wc.lpszClassName = &ClassName;
+    wc.hIconSm = nullptr;
+    RegisterClassEx(&wc); //регистрация класса окна
+    
+    /*HWND CreateWindowExA(
+        DWORD     dwExStyle, расширенные стили
+        LPCSTR    lpClassName, имя класса
+        LPCSTR    lpWindowName, имя окна
+        DWORD     dwStyle, еще обычные стили
+        int       X, позиции по х
+        int       Y, позиции по y
+        int       nWidth, ширина окна
+        int       nHeight, высота окна
+        HWND      hWndParent, родитель окна
+        HMENU     hMenu, есль ли меню
+        HINSTANCE hInstance, экземпляр окна из winmain
+        LPVOID    lpParam настройка пользовательских данных
+    );*/
+
+    //создание окна она будет возвращать дискриптор окна тоесть его структуру с настройками
+    HWND hWnd = CreateWindowEx(
+        0,
+        &ClassName,
+        L"Happy window",
+        WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+        0,
+        0,
+        600,
+        600,
+        nullptr,
+        nullptr,
+        hInstance,
+        nullptr
+        );
+
+    //показать окно    
+    ShowWindow(hWnd, SW_SHOW);
+    
+    //сообщения msg
+   /* BOOL GetMessage(
+        LPMSG lpMsg,  указатель на сообщение 
+        HWND  hWnd, дискриптор окна от куда получется сообщение
+        UINT  wMsgFilterMin, диапозон номеров сообщений которые мы хотим извлеч из очереди
+        UINT  wMsgFilterMax
+    );*/ //получает сообщение не являющимся сообдением завершения то это будет 1 иначе 0 а если ошибка то -1
+
+   /* typedef struct tagMSG {
+        hwnd; поле ввода собщения
+        message; номер сообщения для определния его типа
+        wParam; 32 битные значения
+        lParam; 32 битные значения
+        time; время сообщения
+        pt; метка сообщения положение курсора
+        lPrivate; личные сообщения
+    } MSG, * PMSG, * NPMSG, * LPMSG;*/
+
+    // Message pump
+    MSG msg;
+    BOOL gResult; //нужен для обработки сообщений
+    while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
+    {
+        TranslateMessage(&msg); //если оно > 0 перевод сообщения не изменит наше сообщение
+        DispatchMessage(&msg); //передаем сообщение
+    }
+    if (gResult == -1)
+    {
+        return -1; //если будет ошибка то будет это
+    }
+    else
+    {
+        return msg.wParam; // если будет значение номер кода то выведет номер кода в нашем случае код 69
+    }
+
+
+
+
+
+
+
+
+
+
+	return 0;
+}
