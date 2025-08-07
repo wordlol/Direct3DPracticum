@@ -5,39 +5,39 @@
 ////определение пользовательской процедуры окна это настройка собственного поведения окна
 //LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //{
-//    switch (msg) //доболнительное поедение
-//    {
-//    case WM_CLOSE: //не является ли оно закрытым
-//         {
-//            PostQuitMessage(69); //отправляем сообщение для выхода отправка в очередь для выхода
-//         }
-//            break;
-//    case WM_KEYDOWN: //есть очень много сообщений около 1000+ нпример понимает что нажата клавиша вниз
-//        if (wParam = 'F') //пример
-//        {
-//            SetWindowText(hWnd, L"DSADASD");
-//        }
-//        break;
-//    case WM_CHAR: //сообщение для ввода текста
-//    {
-//        static std::string title;
-//        title.push_back(wParam); //записывает в буфер строки слово
-//        std::wstring stemp = std::wstring(title.begin(), title.end());//преобразует слово из string в wchar_t (LPCWSTR lpString)
-//        SetWindowText(hWnd, stemp.c_str());
+//    //switch (msg) //доболнительное поедение
+//    //{
+//    //case WM_CLOSE: //не является ли оно закрытым
+//    //     {
+//    //        PostQuitMessage(69); //отправляем сообщение для выхода отправка в очередь для выхода
+//    //     }
+//    //        break;
+//    //case WM_KEYDOWN: //есть очень много сообщений около 1000+ нпример понимает что нажата клавиша вниз
+//    //    if (wParam = 'F') //пример
+//    //    {
+//    //        SetWindowText(hWnd, L"DSADASD");
+//    //    }
+//    //    break;
+//    //case WM_CHAR: //сообщение для ввода текста
+//    //{
+//    //    static std::string title;
+//    //    title.push_back(wParam); //записывает в буфер строки слово
+//    //    std::wstring stemp = std::wstring(title.begin(), title.end());//преобразует слово из string в wchar_t (LPCWSTR lpString)
+//    //    SetWindowText(hWnd, stemp.c_str());
 //
-//    }
-//        break;
-//    case WM_LBUTTONDOWN: //левая кнопка мыши
-//    {
-//        POINTS Pt = MAKEPOINTS(lParam); //определяет точки мыши
-//        std::ostringstream oss; //он рисует текст куда нам хочется как раньше это был для терменала а теперь для окна
-//        oss << "(" << Pt.x << "," << Pt.y << ")";
-//        const std::string title = oss.str(); // мы ложны для преобразования иметь константкую строку
-//        std::wstring stemp = std::wstring(title.begin(), title.end()); //только в таком случае не вылетает преобразование
-//        SetWindowText(hWnd, stemp.c_str());
-//    }
-//    break;
-//    }
+//    //}
+//    //    break;
+//    //case WM_LBUTTONDOWN: //левая кнопка мыши
+//    //{
+//    //    POINTS Pt = MAKEPOINTS(lParam); //определяет точки мыши
+//    //    std::ostringstream oss; //он рисует текст куда нам хочется как раньше это был для терменала а теперь для окна
+//    //    oss << "(" << Pt.x << "," << Pt.y << ")";
+//    //    const std::string title = oss.str(); // мы ложны для преобразования иметь константкую строку
+//    //    std::wstring stemp = std::wstring(title.begin(), title.end()); //только в таком случае не вылетает преобразование
+//    //    SetWindowText(hWnd, stemp.c_str());
+//    //}
+//    //break;
+//    //}
 //    return DefWindowProc(hWnd, msg, wParam, lParam); //возвращает базовое поведение окна
 //}
 //
@@ -50,7 +50,6 @@
 //    int nShowCmd //как должно отображаться окно при запуске
 //)
 //{
-//    WNDCLASSEX wc = {0}; //структура которую мы заполняем для передачи ее указателя в регистрацию
 //    //изначально мы ее обнуляем
 //    /*UINT      cbSize; размер структуры
 //    UINT      style; различные стили классов
@@ -64,6 +63,7 @@
 //    LPCWSTR   lpszMenuName; меню окна
 //    LPCWSTR   lpszClassName; название класса которые мы используем для регистрации
 //    HICON     hIconSm;*/ //значек для окна
+//    WNDCLASSEX wc = {0}; //структура которую мы заполняем для передачи ее указателя в регистрацию
 //    const wchar_t ClassName = (wchar_t)"Direct3DPracticum"; // это и есть назавние класса окна
 //    wc.cbSize = sizeof(wc);
 //    wc.style = CS_OWNDC;
