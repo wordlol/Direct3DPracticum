@@ -2,6 +2,9 @@
 #include "StartWin.h"
 #include "Graphics.h"
 #include <memory>
+#include "Timers.h"
+#include "math.h"
+#include <optional>
 
 class Window
 {
@@ -72,7 +75,21 @@ public:
 	{
 		return *pGfx;
 	};
+	static std::optional<int> ProcessMessages() 
+	{
+		MSG msg;
+		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+			{
+				return msg.wParam;
+			}
 
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		return {};
+	};
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam); //функция обработки сообщений
 	static LRESULT CALLBACK HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam); //функция обработчик

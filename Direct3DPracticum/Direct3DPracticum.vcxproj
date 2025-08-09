@@ -137,9 +137,11 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Apps.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="StartWin.h" />
+    <ClInclude Include="Timers.h" />
     <ClInclude Include="WindowsFrameWork.h" />
   </ItemGroup>
   <ItemGroup>
