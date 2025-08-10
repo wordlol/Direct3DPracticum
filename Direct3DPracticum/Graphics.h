@@ -1,57 +1,55 @@
 #pragma once
 #include "WindowsFrameWork.h"
-#include "d3d11.h"
-#pragma comment(lib,"d3d11.lib")
+#include "d3d11.h" /// хэдер библиотеки DirectX11
+#pragma comment(lib,"d3d11.lib") ///загружает библиотеку непосредственно в исходный код (крч нужно чтобы небыло ошибок при инициализации d3d11)
 
 class Graphics
 {
 public:
 	Graphics(HWND hWnd)
-	{   //https://learn.microsoft.com/en-us/windows/win32/api/dxgi/ns-dxgi-dxgi_swap_chain_desc
-		DXGI_SWAP_CHAIN_DESC sd = {}; //структура описывает цепочку буферов
-		//BufferDesc описывающая режим отображения заднего буфера
-		sd.BufferDesc.Width = 0;// ширину разрешения для цепочки отрисовки
-		sd.BufferDesc.Height = 0;// высота разрешения для цепочки отрисовки
-		sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;// описывающая формат отображения крч тут типа все каналы доступны по 8 бит на каждый
-		sd.BufferDesc.RefreshRate.Numerator = 0; //описывающая частоту обновления в герцах представляющее верхнюю часть рационального числа
-		sd.BufferDesc.RefreshRate.Denominator = 0; //описывающая частоту обновления в герцах представляющее нижнюю часть рационального числа
-		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED; // как изображение растягивается в соответствии с заданным разрешением монитора (Неуказанное масштабирование)
-		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED; // описывающий режим рисования скан-линии (Изображение создается от первой строки до последней без пропусков)
-		//SampleDesc описывающая параметры множественной выборки
-		sd.SampleDesc.Count = 1; // Количество мультисэмплов на пиксель
-		sd.SampleDesc.Quality = 0; // Уровень качества изображения. Чем выше качество, тем ниже производительность. Допустимый диапазон находится в диапазоне от нуля до единицы
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // описывающий параметры использования поверхности и доступа к ЦП для заднего буфера
-		sd.BufferCount = 1; // Значение, описывающее количество буферов в цепочке буферов
-		sd.OutputWindow = hWnd; // куда будет сделан вывод дескриптор HWND
-		sd.Windowed = TRUE; // Логическое значение, указывающее, находится ли вывод в оконном режиме
-		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; // описывающий варианты обработки содержимого буфера представления после представления поверхности
-		sd.Flags = 0;// описывающий варианты поведения цепочки буферов
+	{   
+		DXGI_SWAP_CHAIN_DESC sd = {};
+		sd.BufferDesc.Width = 0;
+		sd.BufferDesc.Height = 0;
+		sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		sd.BufferDesc.RefreshRate.Numerator = 0;
+		sd.BufferDesc.RefreshRate.Denominator = 0;
+		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		sd.SampleDesc.Count = 1;
+		sd.SampleDesc.Quality = 0;
+		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; 
+		sd.BufferCount = 1;
+		sd.OutputWindow = hWnd;
+		sd.Windowed = TRUE;
+		sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+		sd.Flags = 0;
 
-		//
-		D3D11CreateDeviceAndSwapChain(
-			nullptr,
-			D3D_DRIVER_TYPE_HARDWARE,
-			nullptr,
-			0,
-			nullptr,
-			0,
-			D3D11_SDK_VERSION,
-			&sd,
-			&pSwap,
-			&pDevice,
-			nullptr,
-			&pContext);
+		/// Создает устройство, представляющее видеоадаптер и цепочку буферов, используемую для отрисовки
+		D3D11CreateDeviceAndSwapChain( ///
+			nullptr, /// видео аддаптер по умолчанию
+			D3D_DRIVER_TYPE_HARDWARE, /// Драйвер оборудования, который реализует функции Direct3D в оборудовании
+			nullptr, /// Дескриптор библиотеки DLL, реализующий программный растеризатор
+			0, ///Уровни среды выполнения для включения (базовый)
+			nullptr, ///базовые уровни набора функций, предназначенных для устройства Direct3D
+			0, /// Количество элементов в pFeatureLevels.^^^^
+			D3D11_SDK_VERSION, /// Версия пакета SDK;
+			&sd, /// дискриптор DXGI_SWAP_CHAIN_DESC
+			&pSwap, /// IDXGISwapChain
+			&pDevice, /// ID3D11Device
+			nullptr, /// Укажите значение NULL в качестве входных данных, если вам не нужно определять, какой уровень компонентов поддерживается
+			&pContext); /// ID3D11DeviceContext
 
-		ID3D11Resource* pBackBuffer = nullptr; //буфер
-		pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer));
-		pDevice->CreateRenderTargetView(
-			pBackBuffer,
-			nullptr,
-			&pTarget
+		ID3D11Resource* pBackBuffer = nullptr; // уникальный код COM
+		pSwap->GetBuffer(0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)); ///Этот метод возвращает буфер текущего при помощи COM
+		pDevice->CreateRenderTargetView( /// Создает рендер-целевой вид для доступа к данным ресурсов
+			pBackBuffer, /// указатель на ресурс
+			nullptr, /// получает доступ ко всем субресурсам на уровне mipmap 0
+			&pTarget /// ID3D11RenderTargetView
 		);
 		pBackBuffer->Release();
 	};
-	~Graphics() //удаление интерфейсов из IUnknown
+	~Graphics()
 	{
 		if (pDevice != nullptr)
 		{
@@ -71,21 +69,21 @@ public:
 		}
 	}
 
-	Graphics(const Graphics&) = delete;				//базовое чтобы нельзя было скопировать объект
+	Graphics(const Graphics&) = delete;	
 	Graphics* operator=(const Graphics&) = delete;
 
 	void EndFrame()
 	{
-		pSwap->Present(1u, 0u); //Представляет пользователю визуализированное изображение.
+		pSwap->Present(1u, 0u);
 	};
 	void ClearBuffer(float red, float green, float blue)
 	{
 		const float color[] = { red,green,blue,1.0f };
-		pContext->ClearRenderTargetView(pTarget, color); //Задайте для всех элементов в мишени рендеринга одно значение
+		pContext->ClearRenderTargetView(pTarget, color); 
 	}
 private:
-	ID3D11Device* pDevice = nullptr; // Используется для создания ресурсов имеет иного различныхх функций описаных здесь https://learn.microsoft.com/en-us/windows/win32/api/d3d11/nn-d3d11-id3d11device
-	IDXGISwapChain* pSwap = nullptr; // Для хранения визуализированных данных перед их представлением на выходе описание функций здесь https://learn.microsoft.com/en-us/windows/win32/api/dxgi/nn-dxgi-idxgiswapchain
-	ID3D11DeviceContext* pContext = nullptr; // Контекст устройства, который генерирует команды рендеринга методы https://learn.microsoft.com/en-us/windows/win32/api/d3d11/nn-d3d11-id3d11devicecontext
-	ID3D11RenderTargetView* pTarget = nullptr; // определяет подресурсы Render-Target, к которым можно получить доступ во время рендеринга
+	ID3D11Device* pDevice = nullptr;
+	IDXGISwapChain* pSwap = nullptr;
+	ID3D11DeviceContext* pContext = nullptr;
+	ID3D11RenderTargetView* pTarget = nullptr;
 };
